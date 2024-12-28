@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.1'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.gradle'
@@ -32,6 +33,27 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
+
+test {
+	useJUnitPlatform()
+
+	// Ensure tests always trigger JaCoCo
+	finalizedBy jacocoTestReport
+}
+
+jacoco {
+	toolVersion = "0.8.10"
+}
+
+jacocoTestReport {
+	dependsOn test // Generate report after running tests
+	reports {
+		xml.required.set(true)
+		csv.required.set(false)
+		html.outputLocation.set(file("$buildDir/reports/jacoco"))
+	}
+}
+
 
 tasks.named('test') {
 	useJUnitPlatform()
